@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Fale Equipment</title>
+  <style>
+    body { font-family: sans-serif; background:#111; color:#fff; }
+    .grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(250px,1fr)); gap:20px; }
+    .card { background:#1a1a1a; padding:15px; border-radius:10px; }
+    img { width:100%; border-radius:8px; }
+  </style>
+</head>
+<body>
+<h1>Equipment</h1>
+<div class="grid" id="grid"></div>
+<script>
+const SUPABASE_URL = "https://phetizgmhisvajdkotip.supabase.co";
+const SUPABASE_KEY = "sb_publishable_HEauGmRE0MNAROz8dRrSAA_soNtQiBl";
+async function load() {
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/model_availability?select=*`, {
+    headers: {
+      apikey: SUPABASE_KEY,
+      Authorization: `Bearer ${SUPABASE_KEY}`
+    }
+  });
+  const data = await res.json();
+  const grid = document.getElementById("grid");
+  data.forEach(item => {
+    const div = document.createElement("div");
+    div.className = "card";
+    div.innerHTML = `
+      <h3>${item.full_name}</h3>
+      <p>Available: ${item.available_units}</p>
+    `;
+    grid.appendChild(div);
+  });
+}
+load();
+</script>
+</body>
+</html>
