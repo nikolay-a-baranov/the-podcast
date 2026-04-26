@@ -75,7 +75,6 @@
       margin: 0 0 14px;
       font-size: 18px;
       color: #e4e4e7;
-      text-transform: capitalize;
       letter-spacing: -0.01em;
     }
     .grid {
@@ -457,7 +456,7 @@
           <div class="builder-tools">
             <input class="search-input" id="builder-search" placeholder="Search equipment..." />
             <select class="filter-select" id="builder-category">
-              <option value="all">All Categories</option>
+              <option value="all">All Groups</option>
             </select>
           </div>
           <div class="builder-options" id="builder-options"></div>
@@ -482,13 +481,19 @@
     const SUPABASE_URL = "https://phetizgmhisvajdkotip.supabase.co";
     const SUPABASE_KEY = "sb_publishable_HEauGmRE0MNAROz8dRrSAA_soNtQiBl";
     const IMAGE_BUCKET_URL = `${SUPABASE_URL}/storage/v1/object/public/equipment-images`;
-    const CATEGORY_ORDER = ["audio", "video", "streaming", "storage"];
-    const CATEGORY_EMOJI = {
-      audio: "🎙️",
-      video: "🎥",
-      streaming: "📡",
-      storage: "💾",
-      other: "📦"
+    const GROUP_EMOJI = {
+      "Audio Interfaces": "🎛️",
+      "Microphones": "🎙️",
+      "Headphones": "🎧",
+      "Stands & Arms": "🦾",
+      "Cables & Adapters": "🔌",
+      "Cameras": "🎥",
+      "Lenses": "🔭",
+      "Video Interfaces": "📺",
+      "Lights": "💡",
+      "Controllers": "🎚️",
+      "Storage": "💾",
+      "Other": "📦"
     };
     let equipment = [];
     let kits = [];
@@ -501,45 +506,38 @@
     function googleImageSearchUrl(name) {
       return `https://www.google.com/search?q=${encodeURIComponent(name)}&udm=2&tbs=ic:trans`;
     }
-    function groupByCategory(items) {
+    function groupByUiGroup(items) {
       return items.reduce((acc, item) => {
-        const key = item.category || "other";
+        const key = item.ui_group || "Other";
         if (!acc[key]) acc[key] = [];
         acc[key].push(item);
         return acc;
       }, {});
     }
-    function sortedCategories(grouped) {
+    function sortedGroups(grouped) {
       return Object.keys(grouped).sort((a, b) => {
-        const ai = CATEGORY_ORDER.indexOf(a);
-        const bi = CATEGORY_ORDER.indexOf(b);
-        if (ai !== -1 && bi !== -1) return ai - bi;
-        if (ai !== -1) return -1;
-        if (bi !== -1) return 1;
-        return a.localeCompare(b);
+        const aOrder = equipment.find(item => item.ui_group === a)?.ui_group_order ?? 999;
+        const bOrder = equipment.find(item => item.ui_group === b)?.ui_group_order ?? 999;
+        return aOrder - bOrder || a.localeCompare(b);
       });
     }
     function imageUrlFor(item) {
       return `${IMAGE_BUCKET_URL}/${item.model_id}.png`;
     }
-    function imageFileNameFor(item) {
-      return `${item.model_id}.png`;
-    }
     function renderCard(item) {
       const card = document.createElement("article");
       card.className = "card";
-      const imageFileName = imageFileNameFor(item);
       const imageUrl = imageUrlFor(item);
       const manufacturerUrl = item.manufacturer_url || null;
       const fallbackUrl = googleImageSearchUrl(item.full_name);
       const title = manufacturerUrl ? `<a href="${manufacturerUrl}" target="_blank" rel="noopener noreferrer">${item.full_name}</a>` : item.full_name;
       card.innerHTML = `
-        <div class="image-wrap" title="Copy Image Filename">
+        <div class="image-wrap" title="Copy Model ID">
           <img src="${imageUrl}" alt="${item.full_name}" loading="lazy" />
           <div class="fallback">🔎</div>
-          <div class="copy-badge">copied</div>
+          <div class="copy-badge"></div>
         </div>
-        <div class="category">${item.category || "—"} / ${item.subcategory || "—"}</div>
+        <div class="category">${toTitleCase(item.ui_group || item.category || "Other")} / ${toTitleCase(item.subcategory || "Other")}</div>
         <h3>${title}</h3>
         <div class="meta">
           <span class="available">${item.available_units} / ${item.total_units} Available</span>
@@ -562,13 +560,13 @@
           return;
         }
         try {
-          await navigator.clipboard.writeText(imageFileName);
-          badge.textContent = imageFileName;
+          await navigator.clipboard.writeText(item.model_id);
+          badge.textContent = item.model_id;
           badge.style.opacity = "1";
           setTimeout(() => {
             badge.style.opacity = "0";
-            badge.textContent = "copied";
-          }, 900);
+            badge.textContent = "";
+          }, 1100);
         } catch (e) {
           console.error("copy failed", e);
         }
@@ -600,16 +598,16 @@
     }
     function renderEquipment() {
       const content = document.getElementById("equipment-content");
-      const grouped = groupByCategory(equipment);
+      const grouped = groupByUiGroup(equipment);
       content.innerHTML = "";
-      sortedCategories(grouped).forEach(category => {
+      sortedGroups(grouped).forEach(group => {
         const section = document.createElement("section");
         const title = document.createElement("h2");
         const grid = document.createElement("div");
         title.className = "section-title";
-        title.textContent = `${CATEGORY_EMOJI[category] || CATEGORY_EMOJI.other} ${toTitleCase(category)}`;
+        title.textContent = `${GROUP_EMOJI[group] || GROUP_EMOJI.Other} ${group}`;
         grid.className = "grid";
-        grouped[category].forEach(item => grid.appendChild(renderCard(item)));
+        grouped[group].forEach(item => grid.appendChild(renderCard(item)));
         section.appendChild(title);
         section.appendChild(grid);
         content.appendChild(section);
@@ -704,23 +702,23 @@
       }
     }
     function setupBuilderFilters() {
-      const categorySelect = document.getElementById("builder-category");
-      const categories = sortedCategories(groupByCategory(equipment));
-      categorySelect.innerHTML = `<option value="all">All Categories</option>`;
-      categories.forEach(category => {
+      const groupSelect = document.getElementById("builder-category");
+      const groups = sortedGroups(groupByUiGroup(equipment));
+      groupSelect.innerHTML = `<option value="all">All Groups</option>`;
+      groups.forEach(group => {
         const option = document.createElement("option");
-        option.value = category;
-        option.textContent = `${CATEGORY_EMOJI[category] || CATEGORY_EMOJI.other} ${toTitleCase(category)}`;
-        categorySelect.appendChild(option);
+        option.value = group;
+        option.textContent = `${GROUP_EMOJI[group] || GROUP_EMOJI.Other} ${group}`;
+        groupSelect.appendChild(option);
       });
     }
     function filteredBuilderEquipment() {
       const search = document.getElementById("builder-search").value.trim().toLowerCase();
-      const category = document.getElementById("builder-category").value;
+      const group = document.getElementById("builder-category").value;
       return equipment.filter(item => {
-        const matchesCategory = category === "all" || item.category === category;
-        const matchesSearch = !search || `${item.full_name} ${item.category} ${item.subcategory} ${item.capability_role}`.toLowerCase().includes(search);
-        return matchesCategory && matchesSearch;
+        const matchesGroup = group === "all" || item.ui_group === group;
+        const matchesSearch = !search || `${item.full_name} ${item.ui_group} ${item.category} ${item.subcategory} ${item.capability_role}`.toLowerCase().includes(search);
+        return matchesGroup && matchesSearch;
       });
     }
     function renderBuilderOptions() {
@@ -741,7 +739,7 @@
           </div>
           <div>
             <div class="option-name">${item.full_name}</div>
-            <div class="option-meta">${toTitleCase(item.category)} / ${toTitleCase(item.subcategory)}</div>
+            <div class="option-meta">${toTitleCase(item.ui_group || item.category)} / ${toTitleCase(item.subcategory)}</div>
           </div>
           <div class="option-count">${item.available_units} / ${item.total_units}</div>
         `;
@@ -797,7 +795,7 @@
         row.innerHTML = `
           <div>
             <div class="builder-item-name">${item.full_name}</div>
-            <div class="builder-item-sub">${toTitleCase(item.category)} / ${toTitleCase(item.subcategory)}</div>
+            <div class="builder-item-sub">${toTitleCase(item.ui_group || item.category)} / ${toTitleCase(item.subcategory)}</div>
             <div class="builder-item-sub ${ok ? "status-ok" : "status-bad"}">${quantity} selected · ${item.available_units} available</div>
           </div>
           <div class="builder-controls">
