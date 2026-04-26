@@ -9,9 +9,18 @@
     * {
       box-sizing: border-box;
     }
+    html {
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    body,
+    button,
+    input,
+    select,
+    textarea {
+      font: inherit;
+    }
     body {
       margin: 0;
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       background: #0b0b0c;
       color: #f4f4f5;
     }
@@ -33,17 +42,23 @@
       background: rgba(11, 11, 12, 0.86);
       backdrop-filter: blur(12px);
     }
-    .tab {
+    .tab,
+    .action-button,
+    .small-button {
       border: 1px solid #27272a;
       background: #18181b;
       color: #f4f4f5;
-      padding: 10px 14px;
-      border-radius: 999px;
       cursor: pointer;
       transition: 0.18s ease;
     }
+    .tab {
+      padding: 10px 14px;
+      border-radius: 999px;
+    }
     .tab:hover,
-    .tab.active {
+    .tab.active,
+    .action-button:hover,
+    .small-button:hover {
       border-color: #52525b;
       background: #27272a;
     }
@@ -132,6 +147,10 @@
       font-size: 11px;
       opacity: 0;
       transition: opacity 0.2s ease;
+      max-width: calc(100% - 20px);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
     .category {
       color: #a1a1aa;
@@ -164,14 +183,17 @@
     .available {
       color: #86efac;
     }
-    .kit-layout {
+    .kit-layout,
+    .builder-layout {
       display: grid;
       grid-template-columns: minmax(260px, 360px) 1fr;
       gap: 18px;
       padding: 16px 32px 40px;
     }
     .kit-list,
-    .kit-details {
+    .kit-details,
+    .builder-panel,
+    .builder-summary {
       background: #111113;
       border: 1px solid #27272a;
       border-radius: 20px;
@@ -198,18 +220,21 @@
       font-weight: 700;
       margin-bottom: 6px;
     }
-    .kit-button-meta {
+    .kit-button-meta,
+    .muted {
       color: #a1a1aa;
       font-size: 13px;
     }
-    .kit-head {
+    .kit-head,
+    .builder-head {
       display: flex;
       justify-content: space-between;
       gap: 16px;
       align-items: flex-start;
       margin-bottom: 16px;
     }
-    .kit-title {
+    .kit-title,
+    .builder-title {
       margin: 0;
       font-size: 26px;
       letter-spacing: -0.03em;
@@ -235,11 +260,13 @@
     .status-bad {
       color: #fca5a5;
     }
-    .kit-items {
+    .kit-items,
+    .builder-items {
       display: grid;
       gap: 10px;
     }
-    .kit-item {
+    .kit-item,
+    .builder-item {
       border: 1px solid #27272a;
       border-radius: 14px;
       background: #18181b;
@@ -248,11 +275,13 @@
       grid-template-columns: 1fr auto;
       gap: 12px;
     }
-    .kit-item-name {
+    .kit-item-name,
+    .builder-item-name {
       font-weight: 700;
       margin-bottom: 4px;
     }
-    .kit-item-sub {
+    .kit-item-sub,
+    .builder-item-sub {
       color: #a1a1aa;
       font-size: 13px;
       line-height: 1.4;
@@ -261,6 +290,107 @@
       color: #d4d4d8;
       font-size: 13px;
       text-align: right;
+    }
+    .builder-tools {
+      display: grid;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    .search-input,
+    .filter-select {
+      width: 100%;
+      border: 1px solid #27272a;
+      background: #09090b;
+      color: #f4f4f5;
+      border-radius: 12px;
+      padding: 11px 12px;
+      outline: none;
+    }
+    .search-input:focus,
+    .filter-select:focus {
+      border-color: #52525b;
+    }
+    .builder-options {
+      display: grid;
+      gap: 8px;
+      max-height: 620px;
+      overflow: auto;
+      padding-right: 4px;
+    }
+    .builder-option {
+      display: grid;
+      grid-template-columns: 42px 1fr auto;
+      align-items: center;
+      gap: 10px;
+      width: 100%;
+      text-align: left;
+      border: 1px solid #27272a;
+      background: #18181b;
+      color: #f4f4f5;
+      padding: 10px;
+      border-radius: 14px;
+      cursor: pointer;
+      transition: 0.18s ease;
+    }
+    .builder-option:hover {
+      border-color: #52525b;
+      background: #27272a;
+    }
+    .option-thumb {
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
+      background: #09090b;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      font-size: 20px;
+    }
+    .option-thumb img {
+      max-width: 100%;
+      max-height: 38px;
+      object-fit: contain;
+    }
+    .option-name {
+      font-weight: 700;
+      font-size: 14px;
+      line-height: 1.25;
+    }
+    .option-meta {
+      color: #a1a1aa;
+      font-size: 12px;
+      margin-top: 3px;
+    }
+    .option-count {
+      color: #86efac;
+      font-size: 13px;
+      white-space: nowrap;
+    }
+    .builder-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      justify-content: flex-end;
+    }
+    .small-button {
+      width: 30px;
+      height: 30px;
+      border-radius: 10px;
+    }
+    .quantity {
+      min-width: 22px;
+      text-align: center;
+    }
+    .builder-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 16px;
+    }
+    .action-button {
+      border-radius: 12px;
+      padding: 10px 12px;
     }
     .empty {
       padding: 24px;
@@ -271,7 +401,7 @@
       padding: 24px 32px;
       color: #a1a1aa;
     }
-    @media (max-width: 850px) {
+    @media (max-width: 900px) {
       header,
       section,
       .tabs {
@@ -287,7 +417,8 @@
       .card {
         min-height: 290px;
       }
-      .kit-layout {
+      .kit-layout,
+      .builder-layout {
         grid-template-columns: 1fr;
         padding-left: 18px;
         padding-right: 18px;
@@ -301,7 +432,8 @@
   </header>
   <nav class="tabs">
     <button class="tab active" data-view="equipment">Equipment</button>
-    <button class="tab" data-view="kits">Kit builder</button>
+    <button class="tab" data-view="kits">Kits</button>
+    <button class="tab" data-view="builder">Build Kit</button>
   </nav>
   <main>
     <div class="view active" id="equipment-view">
@@ -311,6 +443,38 @@
       <div class="kit-layout">
         <aside class="kit-list" id="kit-list"></aside>
         <section class="kit-details" id="kit-details"></section>
+      </div>
+    </div>
+    <div class="view" id="builder-view">
+      <div class="builder-layout">
+        <aside class="builder-panel">
+          <div class="builder-head">
+            <div>
+              <h2 class="builder-title">Build Kit</h2>
+              <div class="muted">Click equipment to add it.</div>
+            </div>
+          </div>
+          <div class="builder-tools">
+            <input class="search-input" id="builder-search" placeholder="Search equipment..." />
+            <select class="filter-select" id="builder-category">
+              <option value="all">All Categories</option>
+            </select>
+          </div>
+          <div class="builder-options" id="builder-options"></div>
+        </aside>
+        <section class="builder-summary">
+          <div class="builder-head">
+            <div>
+              <h2 class="builder-title">Your Kit</h2>
+              <div class="muted" id="builder-summary-meta">No items selected.</div>
+            </div>
+          </div>
+          <div class="builder-items" id="builder-items"></div>
+          <div class="builder-actions">
+            <button class="action-button" id="copy-kit-button">Copy Kit List</button>
+            <button class="action-button" id="clear-kit-button">Clear</button>
+          </div>
+        </section>
       </div>
     </div>
   </main>
@@ -326,9 +490,14 @@
       storage: "💾",
       other: "📦"
     };
+    let equipment = [];
     let kits = [];
     let kitItems = [];
     let selectedKitId = null;
+    let customKit = {};
+    function toTitleCase(value) {
+      return String(value || "Other").replace(/_/g, " ").replace(/\w\S*/g, text => text.charAt(0).toUpperCase() + text.slice(1).toLowerCase());
+    }
     function googleImageSearchUrl(name) {
       return `https://www.google.com/search?q=${encodeURIComponent(name)}&udm=2&tbs=ic:trans`;
     }
@@ -350,16 +519,22 @@
         return a.localeCompare(b);
       });
     }
+    function imageUrlFor(item) {
+      return `${IMAGE_BUCKET_URL}/${item.model_id}.png`;
+    }
+    function imageFileNameFor(item) {
+      return `${item.model_id}.png`;
+    }
     function renderCard(item) {
       const card = document.createElement("article");
       card.className = "card";
-      const imageFileName = `${item.model_id}.png`;
-      const imageUrl = `${IMAGE_BUCKET_URL}/${imageFileName}`;
+      const imageFileName = imageFileNameFor(item);
+      const imageUrl = imageUrlFor(item);
       const manufacturerUrl = item.manufacturer_url || null;
       const fallbackUrl = googleImageSearchUrl(item.full_name);
       const title = manufacturerUrl ? `<a href="${manufacturerUrl}" target="_blank" rel="noopener noreferrer">${item.full_name}</a>` : item.full_name;
       card.innerHTML = `
-        <div class="image-wrap" title="Copy image filename">
+        <div class="image-wrap" title="Copy Image Filename">
           <img src="${imageUrl}" alt="${item.full_name}" loading="lazy" />
           <div class="fallback">🔎</div>
           <div class="copy-badge">copied</div>
@@ -367,7 +542,7 @@
         <div class="category">${item.category || "—"} / ${item.subcategory || "—"}</div>
         <h3>${title}</h3>
         <div class="meta">
-          <span class="available">${item.available_units} / ${item.total_units} available</span>
+          <span class="available">${item.available_units} / ${item.total_units} Available</span>
         </div>
       `;
       const img = card.querySelector("img");
@@ -377,22 +552,27 @@
       img.onerror = () => {
         img.style.display = "none";
         fallback.style.display = "flex";
-        imageWrap.title = "Find transparent image";
-        imageWrap.onclick = () => window.open(fallbackUrl, "_blank");
+        imageWrap.title = "Find Transparent Image";
       };
-      imageWrap.onclick = async () => {
+      imageWrap.addEventListener("click", async event => {
+        event.preventDefault();
+        event.stopPropagation();
         if (img.style.display === "none") {
-          window.open(fallbackUrl, "_blank");
+          window.open(fallbackUrl, "_blank", "noopener,noreferrer");
           return;
         }
         try {
           await navigator.clipboard.writeText(imageFileName);
+          badge.textContent = imageFileName;
           badge.style.opacity = "1";
-          setTimeout(() => badge.style.opacity = "0", 800);
+          setTimeout(() => {
+            badge.style.opacity = "0";
+            badge.textContent = "copied";
+          }, 900);
         } catch (e) {
           console.error("copy failed", e);
         }
-      };
+      });
       return card;
     }
     async function fetchSupabase(path) {
@@ -409,25 +589,31 @@
       const content = document.getElementById("equipment-content");
       content.innerHTML = `<div class="loading">Loading equipment…</div>`;
       try {
-        const data = await fetchSupabase("model_availability?select=*&order=category.asc,full_name.asc");
-        const grouped = groupByCategory(data);
-        content.innerHTML = "";
-        sortedCategories(grouped).forEach(category => {
-          const section = document.createElement("section");
-          const title = document.createElement("h2");
-          const grid = document.createElement("div");
-          title.className = "section-title";
-          title.textContent = `${CATEGORY_EMOJI[category] || CATEGORY_EMOJI.other} ${category}`;
-          grid.className = "grid";
-          grouped[category].forEach(item => grid.appendChild(renderCard(item)));
-          section.appendChild(title);
-          section.appendChild(grid);
-          content.appendChild(section);
-        });
+        equipment = await fetchSupabase("model_availability?select=*&order=category.asc,full_name.asc");
+        renderEquipment();
+        setupBuilderFilters();
+        renderBuilderOptions();
       } catch (error) {
         content.innerHTML = `<div class="error">Could not load equipment. Check Supabase key/API settings.</div>`;
         console.error(error);
       }
+    }
+    function renderEquipment() {
+      const content = document.getElementById("equipment-content");
+      const grouped = groupByCategory(equipment);
+      content.innerHTML = "";
+      sortedCategories(grouped).forEach(category => {
+        const section = document.createElement("section");
+        const title = document.createElement("h2");
+        const grid = document.createElement("div");
+        title.className = "section-title";
+        title.textContent = `${CATEGORY_EMOJI[category] || CATEGORY_EMOJI.other} ${toTitleCase(category)}`;
+        grid.className = "grid";
+        grouped[category].forEach(item => grid.appendChild(renderCard(item)));
+        section.appendChild(title);
+        section.appendChild(grid);
+        content.appendChild(section);
+      });
     }
     function kitStatusClass(count) {
       if (count >= 1) return "status-ok";
@@ -439,9 +625,9 @@
       return "status-bad";
     }
     function itemStatusLabel(status) {
-      if (status === "preferred_available") return "preferred";
-      if (status === "substitute_available") return "substitute";
-      return "missing";
+      if (status === "preferred_available") return "Preferred";
+      if (status === "substitute_available") return "Substitute";
+      return "Missing";
     }
     function renderKitList() {
       const list = document.getElementById("kit-list");
@@ -451,7 +637,7 @@
         btn.className = `kit-button ${kit.kit_id === selectedKitId ? "active" : ""}`;
         btn.innerHTML = `
           <div class="kit-button-title">${kit.name}</div>
-          <div class="kit-button-meta">Available kits: ${kit.available_kits ?? 0}</div>
+          <div class="kit-button-meta">Available Kits: ${kit.available_kits ?? 0}</div>
         `;
         btn.onclick = () => {
           selectedKitId = kit.kit_id;
@@ -475,7 +661,7 @@
             <h2 class="kit-title">${kit.name}</h2>
             <p class="kit-description">${kit.description || ""}</p>
           </div>
-          <div class="status-pill ${kitStatusClass(kit.available_kits)}">${kit.available_kits ?? 0} available</div>
+          <div class="status-pill ${kitStatusClass(kit.available_kits)}">${kit.available_kits ?? 0} Available</div>
         </div>
         <div class="kit-items"></div>
       `;
@@ -485,9 +671,9 @@
         row.className = "kit-item";
         row.innerHTML = `
           <div>
-            <div class="kit-item-name">${item.item_label || item.required_role}</div>
+            <div class="kit-item-name">${item.item_label || toTitleCase(item.required_role)}</div>
             <div class="kit-item-sub">Preferred: ${item.preferred_model_name || "—"}</div>
-            <div class="kit-item-sub">Role: ${item.required_role}${item.allow_substitutes ? " · substitutes allowed" : " · no substitutes"}</div>
+            <div class="kit-item-sub">Role: ${toTitleCase(item.required_role)}${item.allow_substitutes ? " · Substitutes Allowed" : " · No Substitutes"}</div>
             ${item.notes ? `<div class="kit-item-sub">${item.notes}</div>` : ""}
           </div>
           <div class="kit-item-count">
@@ -517,6 +703,132 @@
         console.error(error);
       }
     }
+    function setupBuilderFilters() {
+      const categorySelect = document.getElementById("builder-category");
+      const categories = sortedCategories(groupByCategory(equipment));
+      categorySelect.innerHTML = `<option value="all">All Categories</option>`;
+      categories.forEach(category => {
+        const option = document.createElement("option");
+        option.value = category;
+        option.textContent = `${CATEGORY_EMOJI[category] || CATEGORY_EMOJI.other} ${toTitleCase(category)}`;
+        categorySelect.appendChild(option);
+      });
+    }
+    function filteredBuilderEquipment() {
+      const search = document.getElementById("builder-search").value.trim().toLowerCase();
+      const category = document.getElementById("builder-category").value;
+      return equipment.filter(item => {
+        const matchesCategory = category === "all" || item.category === category;
+        const matchesSearch = !search || `${item.full_name} ${item.category} ${item.subcategory} ${item.capability_role}`.toLowerCase().includes(search);
+        return matchesCategory && matchesSearch;
+      });
+    }
+    function renderBuilderOptions() {
+      const container = document.getElementById("builder-options");
+      const items = filteredBuilderEquipment();
+      container.innerHTML = "";
+      if (!items.length) {
+        container.innerHTML = `<div class="empty">No equipment found.</div>`;
+        return;
+      }
+      items.forEach(item => {
+        const button = document.createElement("button");
+        button.className = "builder-option";
+        button.innerHTML = `
+          <div class="option-thumb">
+            <img src="${imageUrlFor(item)}" alt="${item.full_name}" loading="lazy" />
+            <span style="display:none">🔎</span>
+          </div>
+          <div>
+            <div class="option-name">${item.full_name}</div>
+            <div class="option-meta">${toTitleCase(item.category)} / ${toTitleCase(item.subcategory)}</div>
+          </div>
+          <div class="option-count">${item.available_units} / ${item.total_units}</div>
+        `;
+        const img = button.querySelector("img");
+        const fallback = button.querySelector("span");
+        img.onerror = () => {
+          img.style.display = "none";
+          fallback.style.display = "inline";
+        };
+        button.onclick = () => addToCustomKit(item.model_id);
+        container.appendChild(button);
+      });
+    }
+    function addToCustomKit(modelId) {
+      const item = equipment.find(entry => entry.model_id === modelId);
+      if (!item) return;
+      const current = customKit[modelId] || 0;
+      if (current >= Number(item.total_units || 0)) return;
+      customKit[modelId] = current + 1;
+      renderCustomKit();
+    }
+    function removeFromCustomKit(modelId) {
+      if (!customKit[modelId]) return;
+      customKit[modelId] -= 1;
+      if (customKit[modelId] <= 0) delete customKit[modelId];
+      renderCustomKit();
+    }
+    function clearCustomKit() {
+      customKit = {};
+      renderCustomKit();
+    }
+    function customKitRows() {
+      return Object.entries(customKit).map(([modelId, quantity]) => {
+        const item = equipment.find(entry => entry.model_id === modelId);
+        return { item, quantity };
+      }).filter(row => row.item);
+    }
+    function renderCustomKit() {
+      const container = document.getElementById("builder-items");
+      const meta = document.getElementById("builder-summary-meta");
+      const rows = customKitRows();
+      const totalItems = rows.reduce((sum, row) => sum + row.quantity, 0);
+      meta.textContent = rows.length ? `${totalItems} item${totalItems === 1 ? "" : "s"} selected across ${rows.length} model${rows.length === 1 ? "" : "s"}.` : "No items selected.";
+      container.innerHTML = "";
+      if (!rows.length) {
+        container.innerHTML = `<div class="empty">Click equipment on the left to add it here.</div>`;
+        return;
+      }
+      rows.forEach(({ item, quantity }) => {
+        const ok = quantity <= Number(item.available_units || 0);
+        const row = document.createElement("div");
+        row.className = "builder-item";
+        row.innerHTML = `
+          <div>
+            <div class="builder-item-name">${item.full_name}</div>
+            <div class="builder-item-sub">${toTitleCase(item.category)} / ${toTitleCase(item.subcategory)}</div>
+            <div class="builder-item-sub ${ok ? "status-ok" : "status-bad"}">${quantity} selected · ${item.available_units} available</div>
+          </div>
+          <div class="builder-controls">
+            <button class="small-button" data-action="minus">−</button>
+            <div class="quantity">${quantity}</div>
+            <button class="small-button" data-action="plus">+</button>
+          </div>
+        `;
+        row.querySelector('[data-action="minus"]').onclick = () => removeFromCustomKit(item.model_id);
+        row.querySelector('[data-action="plus"]').onclick = () => addToCustomKit(item.model_id);
+        container.appendChild(row);
+      });
+    }
+    async function copyCustomKit() {
+      const rows = customKitRows();
+      if (!rows.length) return;
+      const text = rows.map(({ item, quantity }) => `${quantity} × ${item.full_name} (${item.model_id})`).join("\n");
+      await navigator.clipboard.writeText(text);
+      const button = document.getElementById("copy-kit-button");
+      button.textContent = "Copied";
+      setTimeout(() => {
+        button.textContent = "Copy Kit List";
+      }, 900);
+    }
+    function setupBuilder() {
+      document.getElementById("builder-search").addEventListener("input", renderBuilderOptions);
+      document.getElementById("builder-category").addEventListener("change", renderBuilderOptions);
+      document.getElementById("copy-kit-button").onclick = copyCustomKit;
+      document.getElementById("clear-kit-button").onclick = clearCustomKit;
+      renderCustomKit();
+    }
     function setupTabs() {
       document.querySelectorAll(".tab").forEach(tab => {
         tab.onclick = () => {
@@ -528,6 +840,7 @@
       });
     }
     setupTabs();
+    setupBuilder();
     loadEquipment();
     loadKits();
   </script>
