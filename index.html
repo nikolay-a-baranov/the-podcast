@@ -589,7 +589,7 @@
       const content = document.getElementById("equipment-content");
       content.innerHTML = `<div class="loading">Loading equipment…</div>`;
       try {
-        equipment = await fetchSupabase("model_availability?select=*&order=category.asc,full_name.asc");
+        equipment = await fetchSupabase("model_availability?select=*&order=ui_group_order.asc,sort_order.asc,full_name.asc");
         renderEquipment();
         setupBuilderFilters();
         renderBuilderOptions();
