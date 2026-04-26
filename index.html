@@ -1,41 +1,207 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
   <title>Fale Equipment</title>
+  <link rel="icon" href="./favicon.ico" />
+
   <style>
-    body { font-family: sans-serif; background:#111; color:#fff; }
-    .grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(250px,1fr)); gap:20px; }
-    .card { background:#1a1a1a; padding:15px; border-radius:10px; }
-    img { width:100%; border-radius:8px; }
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #0f0f0f;
+      color: #fff;
+    }
+
+    header {
+      padding: 28px 32px 12px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 32px;
+    }
+
+    .subtitle {
+      color: #aaa;
+      margin-top: 8px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 16px;
+      padding: 24px 32px 40px;
+    }
+
+    .card {
+      background: #181818;
+      border: 1px solid #242424;
+      border-radius: 16px;
+      padding: 16px;
+      min-height: 300px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .image-wrap {
+      height: 160px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #111;
+      border-radius: 12px;
+      overflow: hidden;
+      text-decoration: none;
+    }
+
+    .image-wrap img {
+      max-width: 100%;
+      max-height: 150px;
+      object-fit: contain;
+    }
+
+    .fallback {
+      display: none;
+      width: 100%;
+      height: 160px;
+      align-items: center;
+      justify-content: center;
+      font-size: 44px;
+      background: #111;
+      border-radius: 12px;
+    }
+
+    .category {
+      color: #999;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    h3 {
+      margin: 0;
+      font-size: 16px;
+      line-height: 1.25;
+    }
+
+    h3 a {
+      color: #fff;
+      text-decoration: none;
+    }
+
+    h3 a:hover {
+      text-decoration: underline;
+    }
+
+    .meta {
+      margin-top: auto;
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      font-size: 14px;
+      color: #ddd;
+    }
+
+    .available {
+      color: #7ee787;
+    }
+
+    .loading,
+    .error {
+      padding: 24px 32px;
+      color: #aaa;
+    }
   </style>
 </head>
+
 <body>
-<h1>Equipment</h1>
-<div class="grid" id="grid"></div>
-<script>
-const SUPABASE_URL = "https://phetizgmhisvajdkotip.supabase.co";
-const SUPABASE_KEY = "sb_publishable_HEauGmRE0MNAROz8dRrSAA_soNtQiBl";
-async function load() {
-  const res = await fetch(`${SUPABASE_URL}/rest/v1/model_availability?select=*`, {
-    headers: {
-      apikey: SUPABASE_KEY,
-      Authorization: `Bearer ${SUPABASE_KEY}`
+  <header>
+    <h1>Fale Equipment</h1>
+    <div class="subtitle">Inventory overview from Supabase</div>
+  </header>
+
+  <main class="grid" id="grid"></main>
+
+  <script>
+    const SUPABASE_URL = "https://phetizgmhisvajdkotip.supabase.co";
+    const SUPABASE_KEY = "PASTE_YOUR_PUBLISHABLE_KEY_HERE";
+    const IMAGE_BUCKET_URL = `${SUPABASE_URL}/storage/v1/object/public/equipment-images`;
+
+    async function loadEquipment() {
+      const grid = document.getElementById("grid");
+      grid.innerHTML = `<div class="loading">Loading equipment…</div>`;
+
+      try {
+        const res = await fetch(
+          `${SUPABASE_URL}/rest/v1/model_availability?select=*&order=category.asc,full_name.asc`,
+          {
+            headers: {
+              apikey: SUPABASE_KEY,
+              Authorization: `Bearer ${SUPABASE_KEY}`
+            }
+          }
+        );
+
+        if (!res.ok) {
+          throw new Error(`Supabase error: ${res.status}`);
+        }
+
+        const data = await res.json();
+        grid.innerHTML = "";
+
+        data.forEach(item => {
+          const card = document.createElement("article");
+          card.className = "card";
+
+          const imageUrl = `${IMAGE_BUCKET_URL}/${item.model_id}.png`;
+          const googleImageSearchUrl =
+            `https://www.google.com/search?q=${encodeURIComponent(item.full_name)}&udm=2&tbs=ic:trans`;
+
+          const title = item.manufacturer_url
+            ? `<a href="${item.manufacturer_url}" target="_blank" rel="noopener noreferrer">${item.full_name}</a>`
+            : item.full_name;
+
+          card.innerHTML = `
+            <a href="${googleImageSearchUrl}" target="_blank" rel="noopener noreferrer" class="image-wrap" title="Find transparent image">
+              <img src="${imageUrl}" alt="${item.full_name}" loading="lazy" />
+              <div class="fallback">📦</div>
+            </a>
+
+            <div class="category">${item.category || "—"} / ${item.subcategory || "—"}</div>
+
+            <h3>${title}</h3>
+
+            <div class="meta">
+              <span>Total: ${item.total_units}</span>
+              <span class="available">Available: ${item.available_units}</span>
+            </div>
+          `;
+
+          const img = card.querySelector("img");
+          const fallback = card.querySelector(".fallback");
+
+          img.onerror = () => {
+            img.style.display = "none";
+            fallback.style.display = "flex";
+          };
+
+          grid.appendChild(card);
+        });
+      } catch (error) {
+        grid.innerHTML = `<div class="error">Could not load equipment. Check Supabase key/API settings.</div>`;
+        console.error(error);
+      }
     }
-  });
-  const data = await res.json();
-  const grid = document.getElementById("grid");
-  data.forEach(item => {
-    const div = document.createElement("div");
-    div.className = "card";
-    div.innerHTML = `
-      <h3>${item.full_name}</h3>
-      <p>Available: ${item.available_units}</p>
-    `;
-    grid.appendChild(div);
-  });
-}
-load();
-</script>
+
+    loadEquipment();
+  </script>
 </body>
 </html>
