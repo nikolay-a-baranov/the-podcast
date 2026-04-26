@@ -3,205 +3,532 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
   <title>Fale Equipment</title>
   <link rel="icon" href="./favicon.ico" />
-
   <style>
     * {
       box-sizing: border-box;
     }
-
     body {
       margin: 0;
-      font-family: Arial, sans-serif;
-      background: #0f0f0f;
-      color: #fff;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #0b0b0c;
+      color: #f4f4f5;
     }
-
     header {
-      padding: 28px 32px 12px;
+      padding: 36px 32px 18px;
     }
-
     h1 {
       margin: 0;
-      font-size: 32px;
+      font-size: 38px;
+      letter-spacing: -0.04em;
     }
-
     .subtitle {
-      color: #aaa;
+      color: #a1a1aa;
       margin-top: 8px;
+      font-size: 15px;
     }
-
+    .tabs {
+      display: flex;
+      gap: 10px;
+      padding: 0 32px 18px;
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: rgba(11, 11, 12, 0.86);
+      backdrop-filter: blur(12px);
+    }
+    .tab {
+      border: 1px solid #27272a;
+      background: #18181b;
+      color: #f4f4f5;
+      padding: 10px 14px;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: 0.18s ease;
+    }
+    .tab:hover,
+    .tab.active {
+      border-color: #52525b;
+      background: #27272a;
+    }
+    .view {
+      display: none;
+    }
+    .view.active {
+      display: block;
+    }
+    section {
+      padding: 16px 32px 28px;
+    }
+    .section-title {
+      margin: 0 0 14px;
+      font-size: 18px;
+      color: #e4e4e7;
+      text-transform: capitalize;
+      letter-spacing: -0.01em;
+    }
     .grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
       gap: 16px;
-      padding: 24px 32px 40px;
     }
-
     .card {
-      background: #181818;
-      border: 1px solid #242424;
-      border-radius: 16px;
+      background: linear-gradient(180deg, #18181b, #111113);
+      border: 1px solid #27272a;
+      border-radius: 20px;
       padding: 16px;
-      min-height: 300px;
+      min-height: 320px;
       display: flex;
       flex-direction: column;
       gap: 12px;
+      transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease, box-shadow 0.18s ease;
     }
-
+    .card:hover {
+      transform: translateY(-3px);
+      border-color: #3f3f46;
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.28);
+    }
     .image-wrap {
-      height: 160px;
+      position: relative;
+      height: 168px;
       display: flex;
       align-items: center;
       justify-content: center;
-      background: #111;
-      border-radius: 12px;
+      background: #09090b;
+      border-radius: 16px;
       overflow: hidden;
       text-decoration: none;
+      border: 1px solid #1f1f23;
+      transition: border-color 0.18s ease, background 0.18s ease;
+      cursor: pointer;
     }
-
+    .card:hover .image-wrap {
+      border-color: #3f3f46;
+      background: #0f0f12;
+    }
     .image-wrap img {
       max-width: 100%;
-      max-height: 150px;
+      max-height: 154px;
       object-fit: contain;
+      transition: transform 0.18s ease;
     }
-
+    .card:hover img {
+      transform: scale(1.04);
+    }
     .fallback {
       display: none;
       width: 100%;
-      height: 160px;
+      height: 168px;
       align-items: center;
       justify-content: center;
-      font-size: 44px;
-      background: #111;
-      border-radius: 12px;
+      font-size: 42px;
+      background: #09090b;
+      border-radius: 16px;
     }
-
+    .copy-badge {
+      position: absolute;
+      bottom: 8px;
+      right: 10px;
+      background: #27272a;
+      border: 1px solid #3f3f46;
+      padding: 2px 6px;
+      border-radius: 6px;
+      font-size: 11px;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
     .category {
-      color: #999;
-      font-size: 12px;
+      color: #a1a1aa;
+      font-size: 11px;
       text-transform: uppercase;
-      letter-spacing: 0.05em;
+      letter-spacing: 0.08em;
     }
-
     h3 {
       margin: 0;
       font-size: 16px;
       line-height: 1.25;
+      letter-spacing: -0.01em;
     }
-
     h3 a {
       color: #fff;
       text-decoration: none;
     }
-
     h3 a:hover {
       text-decoration: underline;
+      text-underline-offset: 3px;
     }
-
     .meta {
       margin-top: auto;
       display: flex;
       justify-content: space-between;
       gap: 8px;
       font-size: 14px;
-      color: #ddd;
+      color: #d4d4d8;
     }
-
     .available {
-      color: #7ee787;
+      color: #86efac;
     }
-
+    .kit-layout {
+      display: grid;
+      grid-template-columns: minmax(260px, 360px) 1fr;
+      gap: 18px;
+      padding: 16px 32px 40px;
+    }
+    .kit-list,
+    .kit-details {
+      background: #111113;
+      border: 1px solid #27272a;
+      border-radius: 20px;
+      padding: 16px;
+    }
+    .kit-button {
+      width: 100%;
+      text-align: left;
+      border: 1px solid #27272a;
+      background: #18181b;
+      color: #f4f4f5;
+      padding: 14px;
+      border-radius: 14px;
+      cursor: pointer;
+      margin-bottom: 10px;
+      transition: 0.18s ease;
+    }
+    .kit-button:hover,
+    .kit-button.active {
+      border-color: #52525b;
+      background: #27272a;
+    }
+    .kit-button-title {
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+    .kit-button-meta {
+      color: #a1a1aa;
+      font-size: 13px;
+    }
+    .kit-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: flex-start;
+      margin-bottom: 16px;
+    }
+    .kit-title {
+      margin: 0;
+      font-size: 26px;
+      letter-spacing: -0.03em;
+    }
+    .kit-description {
+      color: #a1a1aa;
+      margin: 8px 0 0;
+    }
+    .status-pill {
+      padding: 7px 10px;
+      border-radius: 999px;
+      font-size: 13px;
+      white-space: nowrap;
+      border: 1px solid #3f3f46;
+      background: #18181b;
+    }
+    .status-ok {
+      color: #86efac;
+    }
+    .status-warn {
+      color: #fde68a;
+    }
+    .status-bad {
+      color: #fca5a5;
+    }
+    .kit-items {
+      display: grid;
+      gap: 10px;
+    }
+    .kit-item {
+      border: 1px solid #27272a;
+      border-radius: 14px;
+      background: #18181b;
+      padding: 14px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+    }
+    .kit-item-name {
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .kit-item-sub {
+      color: #a1a1aa;
+      font-size: 13px;
+      line-height: 1.4;
+    }
+    .kit-item-count {
+      color: #d4d4d8;
+      font-size: 13px;
+      text-align: right;
+    }
+    .empty {
+      padding: 24px;
+      color: #a1a1aa;
+    }
     .loading,
     .error {
       padding: 24px 32px;
-      color: #aaa;
+      color: #a1a1aa;
+    }
+    @media (max-width: 850px) {
+      header,
+      section,
+      .tabs {
+        padding-left: 18px;
+        padding-right: 18px;
+      }
+      h1 {
+        font-size: 32px;
+      }
+      .grid {
+        grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+      }
+      .card {
+        min-height: 290px;
+      }
+      .kit-layout {
+        grid-template-columns: 1fr;
+        padding-left: 18px;
+        padding-right: 18px;
+      }
     }
   </style>
 </head>
-
 <body>
   <header>
     <h1>Fale Equipment</h1>
     <div class="subtitle">Inventory overview from Supabase</div>
   </header>
-
-  <main class="grid" id="grid"></main>
-
+  <nav class="tabs">
+    <button class="tab active" data-view="equipment">Equipment</button>
+    <button class="tab" data-view="kits">Kit builder</button>
+  </nav>
+  <main>
+    <div class="view active" id="equipment-view">
+      <div id="equipment-content"></div>
+    </div>
+    <div class="view" id="kits-view">
+      <div class="kit-layout">
+        <aside class="kit-list" id="kit-list"></aside>
+        <section class="kit-details" id="kit-details"></section>
+      </div>
+    </div>
+  </main>
   <script>
     const SUPABASE_URL = "https://phetizgmhisvajdkotip.supabase.co";
     const SUPABASE_KEY = "sb_publishable_HEauGmRE0MNAROz8dRrSAA_soNtQiBl";
     const IMAGE_BUCKET_URL = `${SUPABASE_URL}/storage/v1/object/public/equipment-images`;
-
-    async function loadEquipment() {
-      const grid = document.getElementById("grid");
-      grid.innerHTML = `<div class="loading">Loading equipment…</div>`;
-
-      try {
-        const res = await fetch(
-          `${SUPABASE_URL}/rest/v1/model_availability?select=*&order=category.asc,full_name.asc`,
-          {
-            headers: {
-              apikey: SUPABASE_KEY,
-              Authorization: `Bearer ${SUPABASE_KEY}`
-            }
-          }
-        );
-
-        if (!res.ok) {
-          throw new Error(`Supabase error: ${res.status}`);
+    const CATEGORY_ORDER = ["audio", "video", "streaming", "storage"];
+    let kits = [];
+    let kitItems = [];
+    let selectedKitId = null;
+    function googleImageSearchUrl(name) {
+      return `https://www.google.com/search?q=${encodeURIComponent(name)}&udm=2&tbs=ic:trans`;
+    }
+    function groupByCategory(items) {
+      return items.reduce((acc, item) => {
+        const key = item.category || "other";
+        if (!acc[key]) acc[key] = [];
+        acc[key].push(item);
+        return acc;
+      }, {});
+    }
+    function sortedCategories(grouped) {
+      return Object.keys(grouped).sort((a, b) => {
+        const ai = CATEGORY_ORDER.indexOf(a);
+        const bi = CATEGORY_ORDER.indexOf(b);
+        if (ai !== -1 && bi !== -1) return ai - bi;
+        if (ai !== -1) return -1;
+        if (bi !== -1) return 1;
+        return a.localeCompare(b);
+      });
+    }
+    function renderCard(item) {
+      const card = document.createElement("article");
+      card.className = "card";
+      const imageUrl = `${IMAGE_BUCKET_URL}/${item.model_id}.png`;
+      const manufacturerUrl = item.manufacturer_url || null;
+      const fallbackUrl = googleImageSearchUrl(item.full_name);
+      const title = manufacturerUrl ? `<a href="${manufacturerUrl}" target="_blank" rel="noopener noreferrer">${item.full_name}</a>` : item.full_name;
+      card.innerHTML = `
+        <div class="image-wrap" title="Copy ID">
+          <img src="${imageUrl}" alt="${item.full_name}" loading="lazy" />
+          <div class="fallback">🔎</div>
+          <div class="copy-badge">copied</div>
+        </div>
+        <div class="category">${item.category || "—"} / ${item.subcategory || "—"}</div>
+        <h3>${title}</h3>
+        <div class="meta">
+          <span>Total: ${item.total_units}</span>
+          <span class="available">Available: ${item.available_units}</span>
+        </div>
+      `;
+      const img = card.querySelector("img");
+      const fallback = card.querySelector(".fallback");
+      const imageWrap = card.querySelector(".image-wrap");
+      const badge = card.querySelector(".copy-badge");
+      img.onerror = () => {
+        img.style.display = "none";
+        fallback.style.display = "flex";
+        imageWrap.title = "Find image";
+        imageWrap.onclick = () => window.open(fallbackUrl, "_blank");
+      };
+      imageWrap.onclick = async () => {
+        if (img.style.display === "none") {
+          window.open(fallbackUrl, "_blank");
+          return;
         }
-
-        const data = await res.json();
-        grid.innerHTML = "";
-
-        data.forEach(item => {
-          const card = document.createElement("article");
-          card.className = "card";
-
-          const imageUrl = `${IMAGE_BUCKET_URL}/${item.model_id}.png`;
-          const googleImageSearchUrl =
-            `https://www.google.com/search?q=${encodeURIComponent(item.full_name)}&udm=2&tbs=ic:trans`;
-
-          const title = item.manufacturer_url
-            ? `<a href="${item.manufacturer_url}" target="_blank" rel="noopener noreferrer">${item.full_name}</a>`
-            : item.full_name;
-
-          card.innerHTML = `
-            <a href="${googleImageSearchUrl}" target="_blank" rel="noopener noreferrer" class="image-wrap" title="Find transparent image">
-              <img src="${imageUrl}" alt="${item.full_name}" loading="lazy" />
-              <div class="fallback">📦</div>
-            </a>
-
-            <div class="category">${item.category || "—"} / ${item.subcategory || "—"}</div>
-
-            <h3>${title}</h3>
-
-            <div class="meta">
-              <span>Total: ${item.total_units}</span>
-              <span class="available">Available: ${item.available_units}</span>
-            </div>
-          `;
-
-          const img = card.querySelector("img");
-          const fallback = card.querySelector(".fallback");
-
-          img.onerror = () => {
-            img.style.display = "none";
-            fallback.style.display = "flex";
-          };
-
-          grid.appendChild(card);
+        try {
+          await navigator.clipboard.writeText(item.model_id);
+          badge.style.opacity = "1";
+          setTimeout(() => badge.style.opacity = "0", 800);
+        } catch (e) {
+          console.error("copy failed", e);
+        }
+      };
+      return card;
+    }
+    async function fetchSupabase(path) {
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
+        headers: {
+          apikey: SUPABASE_KEY,
+          Authorization: `Bearer ${SUPABASE_KEY}`
+        }
+      });
+      if (!res.ok) throw new Error(`Supabase error: ${res.status}`);
+      return res.json();
+    }
+    async function loadEquipment() {
+      const content = document.getElementById("equipment-content");
+      content.innerHTML = `<div class="loading">Loading equipment…</div>`;
+      try {
+        const data = await fetchSupabase("model_availability?select=*&order=category.asc,full_name.asc");
+        const grouped = groupByCategory(data);
+        content.innerHTML = "";
+        sortedCategories(grouped).forEach(category => {
+          const section = document.createElement("section");
+          const title = document.createElement("h2");
+          const grid = document.createElement("div");
+          title.className = "section-title";
+          title.textContent = category;
+          grid.className = "grid";
+          grouped[category].forEach(item => grid.appendChild(renderCard(item)));
+          section.appendChild(title);
+          section.appendChild(grid);
+          content.appendChild(section);
         });
       } catch (error) {
-        grid.innerHTML = `<div class="error">Could not load equipment. Check Supabase key/API settings.</div>`;
+        content.innerHTML = `<div class="error">Could not load equipment. Check Supabase key/API settings.</div>`;
         console.error(error);
       }
     }
-
+    function kitStatusClass(count) {
+      if (count >= 1) return "status-ok";
+      return "status-bad";
+    }
+    function itemStatusClass(status) {
+      if (status === "preferred_available") return "status-ok";
+      if (status === "substitute_available") return "status-warn";
+      return "status-bad";
+    }
+    function itemStatusLabel(status) {
+      if (status === "preferred_available") return "preferred";
+      if (status === "substitute_available") return "substitute";
+      return "missing";
+    }
+    function renderKitList() {
+      const list = document.getElementById("kit-list");
+      list.innerHTML = "";
+      kits.forEach(kit => {
+        const btn = document.createElement("button");
+        btn.className = `kit-button ${kit.kit_id === selectedKitId ? "active" : ""}`;
+        btn.innerHTML = `
+          <div class="kit-button-title">${kit.name}</div>
+          <div class="kit-button-meta">Available kits: ${kit.available_kits ?? 0}</div>
+        `;
+        btn.onclick = () => {
+          selectedKitId = kit.kit_id;
+          renderKitList();
+          renderKitDetails();
+        };
+        list.appendChild(btn);
+      });
+    }
+    function renderKitDetails() {
+      const details = document.getElementById("kit-details");
+      const kit = kits.find(k => k.kit_id === selectedKitId);
+      if (!kit) {
+        details.innerHTML = `<div class="empty">Select a kit.</div>`;
+        return;
+      }
+      const items = kitItems.filter(item => item.kit_id === selectedKitId);
+      details.innerHTML = `
+        <div class="kit-head">
+          <div>
+            <h2 class="kit-title">${kit.name}</h2>
+            <p class="kit-description">${kit.description || ""}</p>
+          </div>
+          <div class="status-pill ${kitStatusClass(kit.available_kits)}">${kit.available_kits ?? 0} available</div>
+        </div>
+        <div class="kit-items"></div>
+      `;
+      const container = details.querySelector(".kit-items");
+      items.forEach(item => {
+        const row = document.createElement("div");
+        row.className = "kit-item";
+        row.innerHTML = `
+          <div>
+            <div class="kit-item-name">${item.item_label || item.required_role}</div>
+            <div class="kit-item-sub">Preferred: ${item.preferred_model_name || "—"}</div>
+            <div class="kit-item-sub">Role: ${item.required_role}${item.allow_substitutes ? " · substitutes allowed" : " · no substitutes"}</div>
+            ${item.notes ? `<div class="kit-item-sub">${item.notes}</div>` : ""}
+          </div>
+          <div class="kit-item-count">
+            <div>Need: ${item.quantity}</div>
+            <div>Preferred: ${item.preferred_available_units}</div>
+            <div>Any: ${item.any_matching_available_units}</div>
+            <div class="${itemStatusClass(item.availability_status)}">${itemStatusLabel(item.availability_status)}</div>
+          </div>
+        `;
+        container.appendChild(row);
+      });
+    }
+    async function loadKits() {
+      const list = document.getElementById("kit-list");
+      const details = document.getElementById("kit-details");
+      list.innerHTML = `<div class="loading">Loading kits…</div>`;
+      details.innerHTML = `<div class="empty">Loading…</div>`;
+      try {
+        kits = await fetchSupabase("kit_availability?select=*&order=name.asc");
+        kitItems = await fetchSupabase("kit_items_resolved?select=*&order=kit_name.asc,item_label.asc");
+        selectedKitId = kits[0]?.kit_id || null;
+        renderKitList();
+        renderKitDetails();
+      } catch (error) {
+        list.innerHTML = `<div class="error">Could not load kits.</div>`;
+        details.innerHTML = "";
+        console.error(error);
+      }
+    }
+    function setupTabs() {
+      document.querySelectorAll(".tab").forEach(tab => {
+        tab.onclick = () => {
+          document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+          document.querySelectorAll(".view").forEach(v => v.classList.remove("active"));
+          tab.classList.add("active");
+          document.getElementById(`${tab.dataset.view}-view`).classList.add("active");
+        };
+      });
+    }
+    setupTabs();
     loadEquipment();
+    loadKits();
   </script>
 </body>
 </html>
