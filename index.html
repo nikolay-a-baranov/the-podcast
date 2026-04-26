@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Fale Equipment</title>
+  <title>Equipment</title>
   <link rel="icon" href="./favicon.ico" />
   <style>
     * {
@@ -22,11 +22,6 @@
       margin: 0;
       font-size: 38px;
       letter-spacing: -0.04em;
-    }
-    .subtitle {
-      color: #a1a1aa;
-      margin-top: 8px;
-      font-size: 15px;
     }
     .tabs {
       display: flex;
@@ -302,8 +297,7 @@
 </head>
 <body>
   <header>
-    <h1>Fale Equipment</h1>
-    <div class="subtitle">Inventory overview from Supabase</div>
+    <h1>Equipment</h1>
   </header>
   <nav class="tabs">
     <button class="tab active" data-view="equipment">Equipment</button>
@@ -325,6 +319,13 @@
     const SUPABASE_KEY = "sb_publishable_HEauGmRE0MNAROz8dRrSAA_soNtQiBl";
     const IMAGE_BUCKET_URL = `${SUPABASE_URL}/storage/v1/object/public/equipment-images`;
     const CATEGORY_ORDER = ["audio", "video", "streaming", "storage"];
+    const CATEGORY_EMOJI = {
+      audio: "🎙️",
+      video: "🎥",
+      streaming: "📡",
+      storage: "💾",
+      other: "📦"
+    };
     let kits = [];
     let kitItems = [];
     let selectedKitId = null;
@@ -352,12 +353,13 @@
     function renderCard(item) {
       const card = document.createElement("article");
       card.className = "card";
-      const imageUrl = `${IMAGE_BUCKET_URL}/${item.model_id}.png`;
+      const imageFileName = `${item.model_id}.png`;
+      const imageUrl = `${IMAGE_BUCKET_URL}/${imageFileName}`;
       const manufacturerUrl = item.manufacturer_url || null;
       const fallbackUrl = googleImageSearchUrl(item.full_name);
       const title = manufacturerUrl ? `<a href="${manufacturerUrl}" target="_blank" rel="noopener noreferrer">${item.full_name}</a>` : item.full_name;
       card.innerHTML = `
-        <div class="image-wrap" title="Copy ID">
+        <div class="image-wrap" title="Copy image filename">
           <img src="${imageUrl}" alt="${item.full_name}" loading="lazy" />
           <div class="fallback">🔎</div>
           <div class="copy-badge">copied</div>
@@ -365,8 +367,7 @@
         <div class="category">${item.category || "—"} / ${item.subcategory || "—"}</div>
         <h3>${title}</h3>
         <div class="meta">
-          <span>Total: ${item.total_units}</span>
-          <span class="available">Available: ${item.available_units}</span>
+          <span class="available">${item.available_units} / ${item.total_units} available</span>
         </div>
       `;
       const img = card.querySelector("img");
@@ -376,7 +377,7 @@
       img.onerror = () => {
         img.style.display = "none";
         fallback.style.display = "flex";
-        imageWrap.title = "Find image";
+        imageWrap.title = "Find transparent image";
         imageWrap.onclick = () => window.open(fallbackUrl, "_blank");
       };
       imageWrap.onclick = async () => {
@@ -385,7 +386,7 @@
           return;
         }
         try {
-          await navigator.clipboard.writeText(item.model_id);
+          await navigator.clipboard.writeText(imageFileName);
           badge.style.opacity = "1";
           setTimeout(() => badge.style.opacity = "0", 800);
         } catch (e) {
@@ -416,7 +417,7 @@
           const title = document.createElement("h2");
           const grid = document.createElement("div");
           title.className = "section-title";
-          title.textContent = category;
+          title.textContent = `${CATEGORY_EMOJI[category] || CATEGORY_EMOJI.other} ${category}`;
           grid.className = "grid";
           grouped[category].forEach(item => grid.appendChild(renderCard(item)));
           section.appendChild(title);
